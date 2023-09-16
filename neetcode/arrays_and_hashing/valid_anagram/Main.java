@@ -31,8 +31,7 @@ class Solution {
 		Map<Character, Integer> sMap = getCharOccurenceMap(s);
 		Map<Character, Integer> tMap = getCharOccurenceMap(t);
 
-		return sMap.entrySet().stream()
-			.allMatch(e -> e.getValue().equals(tMap.get(e.getKey())));	
+		return sMap.equals(tMap); 
 	}
 
 	private Map<Character, Integer> getCharOccurenceMap(String s) {
