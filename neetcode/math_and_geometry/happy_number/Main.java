@@ -7,13 +7,12 @@ class Main {
 class Solution {
 	public boolean isHappy(int n) {
 		Set<Integer> set = new HashSet<>();
-		while (set.add(n) == true || n != 1) {
+		while (set.add(n)) {
 			int sum = 0;
-			while (n >= 10) {
+			while (n > 0) {
 				sum += (n % 10) * (n % 10);
 				n /= 10;
 			}
-			sum += n * n;
 			n = sum;
 			
 		}
