@@ -36,48 +36,91 @@ class Solution {
 		}
 		System.out.println();
 		k++;
+		if (k > 100) return;
 		System.out.println("k = " + k);
-		if (k > 300) return;
-//		int x = 0;
-//		if (k % 2 == 0) {
-//			x = (r - l) / 2;
-//		} else {
-//			x = (r - l) / 2 + 1;
-//		}
 		int x = (int) (l + Math.random() * (r - l));
 		if (k % 2 != 0) x++;
 		System.out.println("x = " + x);
-		int newx = x;
-		int p = partition(i -> i < nums[newx], nums, l, r);
+
+		int p = partition(nums, l, r, nums[x]);
+		if (p == -2) return;
 		System.out.println("p = " + p);
 		quicksort(nums, l, p);
 		quicksort(nums, p + 1, r);
 	} 
 
-        public int partition(Predicate<Integer> condition, int[] nums, int left, int right) {
+        public int partition(int[] nums, int left, int right, int x) {
 		System.out.println("I'm here partition left =" + left + ", right =" + right);
-                while (left <= right) {
-                        while (left <= right && condition.test(nums[left])) {
-                                left++;
-                        }
-                        if (left <= right && !condition.test(nums[left])) {
-                                while (left <= right && !condition.test(nums[right])) {
-                                        right--;
-                                }
-                                if (left <= right && condition.test(nums[right])) {
-                                        int tmp = nums[right];
-                                        nums[right] = nums[left];
-                                        nums[left] = tmp;
-                                        left++;
-                                        right--;
-                                }
-                        }
-                }
+
+		int e = -1;
+		int g = -1;
+		int n = left;
+
+		int tmp = 0;
+                while (n <= right) {
+                        if (n <= right && nums[n] < x) {
+                                if (e == - 1 && g == -1) {
+
+				} else if (e != - 1 && g != -1) {
+					swap(nums, e, n);
+					swap(nums, g, n);
+					e++;
+					g++;
+				} else if (e != -1) {
+					swap(nums, e, n);
+					e++;
+				} else if (g != -1) {
+					swap(nums, g, n);
+					g++;
+				}
+                        } else if (n <= right && nums[n] == x) {
+				if (e == - 1 && g == - 1) {
+					e = n;
+				} else if (e != -1 && g != - 1) {
+					swap(nums, g, n);
+					g++;
+				} else if (e != - 1) {
+				} else if (g != - 1) {
+					swap(nums, g, n);
+					e = g;
+					g++;
+				}
+			} else if (n <= right && nums[n] > x) {
+				if (e == - 1 && g == -1) {
+					g = n;
+				} else if (e != -1 && g != -1) {
+				} else if (e != -1) {
+					g = n;
+				} else if (g != -1) {
+				}
+			}
+			n++;
+		}
 		for (int i = 0; i < nums.length; i++) {
 			if (i != 0) System.out.print(" ");
 			System.out.print(nums[i]);
 		}
 		System.out.println();
-		return left - 1;
+		int res = 0;
+		if (e == - 1 && g == -1) {
+			res = -1;
+		} else if (e != -1 && g != -1) {
+			res = e - 1;
+		} else if (e != -1) {
+			if (e == left) {
+				res = -2;
+			} else {
+				res = e - 1;
+			}
+		} else if (g != - 1) {
+			res = g - 1;
+		}
+		return res;
+	}
+
+	private void swap(int[] nums, int p, int q) {
+		int tmp = nums[p];
+		nums[p] = nums[q];
+		nums[q] = tmp;
 	}
 }
