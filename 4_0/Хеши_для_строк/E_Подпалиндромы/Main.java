@@ -22,19 +22,50 @@ class Solution {
 
 	public int solve(String s) {
 		int count = 0;
-		hashInit(s);
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < s.length(); i++) {
-			for (int j = i; j < s.length(); j++) {
-				int len = j - i;
-				if (equals(len, i, s.length() - j - 1)) {
-					count++;		
-				}
+			if (i != 0) sb.append("$");
+			sb.append(s.charAt(i));
+		}
+		hashInit(sb);
+		for (int i = 0; i < sb.length(); i++) {
+			int maxLenPalindrome = findMaxLengthPalindrome(sb, i);
+			if (sb.charAt(i) == '$' && maxLenPalindrome > 1) {
+				count += (maxLenPalindrome + 1) / 4;
+			} else if (sb.charAt(i) != '$') {
+				count += (maxLenPalindrome + 3) / 4;
 			}
 		}
 		return count;
 	}
 
-	private void hashInit(String s) {
+	private int findMaxLengthPalindrome(StringBuilder s, int center) {
+		int result = 0;
+		int sLength = s.length();
+		int radius = Integer.min(center, sLength - 1 - center);
+		int l = center - radius;
+		int r = center;
+		int prevL = center - radius;
+		while (l <= r) {
+			int frH = l;
+			int frZ = center + (center - l);
+			if (equals(sLength, center - l + 1, frH, frZ)) {
+				int curLen =  2 * (center - l) + 1;
+				result = Integer.max(result, curLen);
+				r = l - 1;
+				int tmp = l;
+				l = prevL + 1;
+				prevL = tmp;
+			} else {
+				prevL = l;
+				l = (r + l) / 2 + 1;
+			}
+		}
+		if (s.charAt(center + result / 2) == '$') result -= 2;
+		return result;
+	}
+
+	private void hashInit(StringBuilder s) {
         	h = new long[s.length() + 1];
                 z = new long[s.length() + 1];
                 x = new long[s.length() + 1];
@@ -48,7 +79,8 @@ class Solution {
                 }
         }
 
-        public boolean equals(int len, int frH, int frZ) {
+        public boolean equals(int sLen, int len, int frH, int frZ) {
+		frZ = sLen - 1 - frZ;
                 return (h[frH + len] + z[frZ] * x[len]) % p ==
                         (z[frZ + len] + h[frH] * x[len]) % p;
         }
